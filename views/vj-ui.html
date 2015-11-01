@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>VJ UI</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Bootstrap-->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+
+    <script src="/js/socket.io.js"></script>
+    <style type="text/css">
+      html,body
+      {
+      height: 100%;
+      }
+      .container{
+        min-height: 100%;
+      }
+      .row
+{
+    height: 100%;
+  }
+      .top-padding { margin-top:20px; }
+      .table-bingo{
+        border: 5px solid;
+        color: red;
+        border-radius: 15px;
+        margin:0 auto;padding:0px;
+        border-collapse: collapse;
+      }
+      .table-bingo th{
+        color: white;
+        background-color: red;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        font-size: 25px;
+      }
+      .table-bingo td{
+        width: 40px;
+        height: 40px;
+        text-align: center;
+      }
+      .button-card{
+        /*margin-left: 5px;
+        display:block;width:30px;height:30px;border-radius:15px;font-size:20px;
+        color:#FFF;line-height:30px;text-align:center;background:#fff;
+        text-decoration: none;*/
+        width: 30px;
+        height: 30px;
+        background-color: #fff;
+        border: none;
+        border-radius: 50%
+      }
+      .card-click{
+        color:#FFF;background:red;
+      }
+      a:link {
+          text-decoration: none;
+          color: #000;
+      }
+      a:visited {
+          text-decoration: none;
+          color: #000;
+      }
+      a:focus {
+          outline: 0;
+      }
+      .box-chat {
+        background: #fafafa;
+        padding: 7px;
+        border: 1px solid #ccc;
+        height: 400px;
+      }
+      #chat-history {
+          list-style: none;
+          padding: 0 0 10px 0;
+          overflow: auto;
+          height: 100%;
+      }
+      .message {
+          background: #eee;
+          padding: 5px 10px;
+          border-radius: 15px;
+          margin-bottom: 5px;
+          float: left;
+          clear: both;
+          font-size: 12px;
+          word-wrap:break-word;
+      }
+      .message-me {
+          background: #B3ED7A;
+          float: right;
+      }
+    </style>
+  </head>
+  <body class="container">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#"></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#"></a></li>
+
+          </ul>
+          <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="vj/vj-ui.html">VJ</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+        <div class="box-control">
+          <table class="table-bingo" border="1">
+            <thead>
+              <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+        <div class="row">
+          <div class="col-md-12">
+            <select class="form-control" name="cboGame" id="cboGame">
+              <option value="0">--select--</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <input type="radio" name="rdoStatus" id="rdoStatus" class="rdoStatus" value="1"  >start
+            <input type="radio" name="rdoStatus" id="rdoStatus" class="rdoStatus" value="0" checked="true">stop
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="pill" href="#chat1">chat1</a></li>
+          <li><a data-toggle="pill" href="#chat2">chat1</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="chat1" class="tab-pane fade in active">
+            <form id="chatForm">
+              <div class="box-chat">
+                <ul id="chat-history">
+                </ul>
+              </div>
+              <input type="text" class="form-control" id="chat-message" autocomplete="off" placeholder="Enter message here...">
+            </form>
+          </div>
+          <div id="chat2" class="tab-pane fade">
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        var gameselect;
+        var gamestatus;
+        var username = prompt("What's your name?");
+        var thisroom = window.location.pathname.split('/')[3];
+        if(thisroom != undefined && $.isNumeric(thisroom)){
+          console.log(thisroom);
+        }else{
+          console.log('go to homepage');
+        }
+//socket
+        var socket = io.connect();
+        socket.on('connect', function(){
+      		console.log(username,thisroom);
+          socket.emit('createroom',username,thisroom);
+          socket.emit('joinroom',username,thisroom);
+      	});
+        socket.on('allgames', function(data){
+          console.log(JSON.stringify(data));
+          var jsondata = jQuery.parseJSON(JSON.stringify(data));
+          //var jsondata = [{"game_id":1,"game_name":"game1","description":"111","Logo":"1234"}];
+          $.each(jsondata,function(index,val){
+            //console.log(index+"|"+val.game_name);
+            $('#cboGame').append($('<option>', {
+                value: val.game_id,
+                text : val.game_name
+            }));
+          });
+        });
+        /*socket.on('allgames',function(data){
+          console.log('all games:'+data);
+        });*/
+        socket.on('gameselect',function(data){
+          console.log('gameselect:'+data);
+          if(data != null){
+            $("#cboGame").val(data);
+          }
+        });
+        socket.on('gamestatus',function(data){
+          console.log('gamestatus:'+data);
+          if(data != null){
+            $("input[name=rdoStatus][value=" + data + "]").prop('checked', true);
+          }
+        });
+        socket.on('gamecontrol',function(data){
+          if(data != null){
+            console.log('gameconstrol:'+data);
+            var controlgame = jQuery.parseJSON(data);
+            $.each(controlgame,function(index,val){
+              //console.log(index+"|"+val);
+              //console.log(master.master+i);
+              if(val){
+                if(!$("#master"+index).hasClass('card-click')){
+                  $("#master"+index).addClass('card-click');
+                }
+              }else{
+                $("#master"+index).removeClass('card-click');
+              }
+            });
+          }
+        });
+        socket.on('updatechat',function(user,data){
+          //console.log(data);
+          if (username == user) {
+            // ถ้าเราเป็นคนส่งเอง ให้พ่น li.message.message--me
+            $('#chat-history').append($('<li class="message message-me">').text(data));
+          } else {
+          // แต่ถ้าเป็นคนอื่นส่ง ให้พ่น li.message เฉยๆ
+            $('#chat-history').append($('<li class="message">').text(user + ': ' + data));
+          }
+          // เมื่อพ่นข้อความแล้ว ก็ให้เลื่อนหน้าจอไปที่ข้อความล่าสุดด้วย
+          $('#chat-history')[0].scrollTop = $('#chat-history')[0].scrollHeight;
+        });
+        $('#chatForm').submit(function(event) {
+          console.log($('#chat-message').val());
+          if($('#chat-message').val() != ''){
+            socket.emit('sendchat',$('#chat-message').val());
+          }
+          $(this)[0].reset();
+          return false;
+        });
+        for(i=1;i<=15;i++){
+          //console.log(i+"|"+(15+i)+"|"+(30+i)+"|"+(45+i)+"|"+(60+i));
+          $('tbody').append('<tr><td><input type="button" class="button-card" id="master'+i+'" value="'+i+'"></td><td><input type="button" class="button-card" id="master'+(15+i)+'" value="'+(15+i)+'"></td><td><input type="button" class="button-card" id="master'+(30+i)+'" value="'+(30+i)+'"></td><td><input type="button" class="button-card" id="master'+(45+i)+'" value="'+(45+i)+'"></td><td><input type="button" class="button-card" id="master'+(60+i)+'" value="'+(60+i)+'"></td></tr>')
+        }
+        $(".button-card").click(function() {
+          if( !$(this).hasClass('card-click')){
+            $(this).addClass('card-click');
+          }else{
+            $(this).removeClass('card-click');
+          }
+            var myVals = {};
+            $('.button-card').each(function(){
+              if($(this).hasClass('card-click')){
+                myVals[$(this).val()] = true;
+              }else {
+                myVals[$(this).val()] = false;
+              }
+            });
+            //$.each(myVals, function(index, value) {
+                //console.log(JSON.stringify(myVals));
+            //});
+            socket.emit('gamecontrol',JSON.stringify(myVals));
+        });
+        $("input[name=rdoStatus]").change(function(event) {
+          var gameno = '';
+          if($("input[name=rdoStatus]:checked").val() == 1){
+            var d = new Date();
+            gameno = d.getFullYear()+''+(d.getMonth()+1)+''+d.getDate()+''+d.getHours()+''+d.getMinutes()+''+d.getSeconds();
+          }
+          socket.emit('gamestatus',$("input[name=rdoStatus]:checked").val(),gameno);
+          //console.log($("input[name=rdoStatus]:checked").val());
+          gamestatus = $("input[name=rdoStatus]:checked").val();
+        });
+        $("#cboGame").change(function(event) {
+          socket.emit('gameselect',$("#cboGame").val());
+          gameselect = $("#cboGame").val();
+        });
+      });
+    </script>
+  </body>
+</html>

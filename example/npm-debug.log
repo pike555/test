@@ -1,0 +1,43 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node',
+1 verbose cli   'C:\\Users\\PIKE\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'socket.io/examples/chat' ]
+2 info using npm@2.13.0
+3 info using node@v0.12.5
+4 verbose install initial load of C:\node\package.json
+5 warn package.json test-stream@1.0.0 No description
+6 warn package.json test-stream@1.0.0 No repository field.
+7 warn package.json test-stream@1.0.0 No README data
+8 verbose installManyTop reading scoped package data from C:\node\node_modules\bootstrap\package.json
+9 verbose installManyTop reading scoped package data from C:\node\node_modules\express\package.json
+10 verbose installManyTop reading scoped package data from C:\node\node_modules\mysql\package.json
+11 verbose installManyTop reading scoped package data from C:\node\node_modules\socket.io\package.json
+12 verbose installManyTop reading scoped package data from C:\node\node_modules\video-js.min.css\package.json
+13 verbose installManyTop reading scoped package data from C:\node\node_modules\video-js.swf\package.json
+14 verbose installManyTop reading scoped package data from C:\node\node_modules\video.min.js\package.json
+15 info package.json socket.io@1.3.7 No license field.
+16 verbose readDependencies loading dependencies from C:\node\package.json
+17 silly cache add args [ 'socket.io/examples/chat', null ]
+18 verbose cache add spec socket.io/examples/chat
+19 silly cache add parsed spec { raw: 'socket.io/examples/chat',
+19 silly cache add   scope: null,
+19 silly cache add   name: null,
+19 silly cache add   rawSpec: 'socket.io/examples/chat',
+19 silly cache add   spec: 'C:\\node\\example\\socket.io\\examples\\chat',
+19 silly cache add   type: 'local' }
+20 error addLocal Could not install C:\node\example\socket.io\examples\chat
+21 verbose stack Error: ENOENT, open 'C:\node\example\socket.io\examples\chat'
+21 verbose stack     at Error (native)
+22 verbose cwd C:\node\example
+23 error Windows_NT 6.1.7601
+24 error argv "node" "C:\\Users\\PIKE\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js" "install" "socket.io/examples/chat"
+25 error node v0.12.5
+26 error npm  v2.13.0
+27 error path C:\node\example\socket.io\examples\chat
+28 error code ENOENT
+29 error errno -4058
+30 error enoent ENOENT, open 'C:\node\example\socket.io\examples\chat'
+30 error enoent This is most likely not a problem with npm itself
+30 error enoent and is related to npm not being able to find a file.
+31 verbose exit [ -4058, true ]

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>User UI</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Bootstrap-->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+
+    <link href="/css/video-js.min.css" rel="stylesheet">
+    <script src="/js/video.min.js"></script>
+    <script>
+      videojs.options.flash.swf = "/swf/video-js.swf"
+    </script>
+
+    <script src="https://cdn.socket.io/socket.io-1.3.3.js"></script>
+    <style type="text/css">
+      .top-padding { margin-top:20px; }
+      .table-master-bingo{
+        border: 5px solid;
+        color: red;
+        border-radius: 15px;
+        margin:0 auto;padding:0px;
+        border-collapse: collapse;
+      }
+      .table-master-bingo th{
+        color: white;
+        background-color: red;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        font-size: 20px;
+      }
+      .table-master-bingo td{
+        width: 30px;
+        height: 30px;
+        text-align: center;
+      }
+      .button-master-card{
+        /*margin-left: 2px;
+        display:block;width:20px;height:20px;border-radius:10px;font-size:12px;
+        color:#FFF;line-height:20px;text-align:center;background:#fff;
+        text-decoration: none;
+        cursor: default;*/
+        font-size:12px;
+        width: 25px;
+        height: 25px;
+        background-color: #fff;
+        color: #000;
+        border: none;
+        border-radius: 50%;
+      }
+      .table-bingo{
+        table-layout: fixed;
+        border: 5px solid;
+        color: red;
+        border-radius: 15px;
+      	margin:0 auto;padding:0px;
+      }
+      .table-bingo th{
+        color: white;
+        background-color: red;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 25px;
+      }
+      .table-bingo td{
+        width: 50px;
+        height: 50px;
+        text-align: center;
+      }
+      .button-card{
+        /*margin: 10%;
+        display:block;width:38px;height:38px;border-radius:19px;font-size:18px;
+        color:#FFF;line-height:38px;text-align:center;background:#fff;
+        text-decoration: none;*/
+        font-size:16px;
+        width: 80%;
+        height: 80%;
+        background-color: #fff;
+        color: #000;
+        border: none;
+        border-radius: 50%;
+      }
+      .card-click{
+        color:#FFF;background:red;
+      }
+      a:link {
+          text-decoration: none;
+          color: #000;
+      }
+      a:visited {
+          text-decoration: none;
+          color: #000;
+      }
+      a:focus {
+          outline: 0;
+      }
+      .box-chat {
+        background: #fafafa;
+        padding: 7px;
+        border: 1px solid #ccc;
+        height: 400px;
+      }
+      #chat-history {
+          list-style: none;
+          padding: 0 0 10px 0;
+          overflow: auto;
+          height: 100%;
+      }
+      .message {
+          background: #eee;
+          padding: 5px 10px;
+          border-radius: 15px;
+          margin-bottom: 5px;
+          float: left;
+          clear: both;
+          font-size: 12px;
+          max-width: 100%;
+          word-wrap:break-word;
+      }
+      .message-me {
+          background: #B3ED7A;
+          float: right;
+      }
+      .box{
+        width: 100%;
+        border-radius: 3px;
+        background: #fff;
+        padding: 5px;
+        border: 1px solid #ccc;
+      }
+
+    </style>
+  </head>
+  <body class="container">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#"></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#"></a></li>
+
+          </ul>
+          <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="vj/vj-ui.html">VJ</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <div class="row">
+      <!-- game detail-->
+      <div class="col-md-3 col-sm-3 hidden-xs text-center">
+        <table class="table-master-bingo" border="1">
+          <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
+        </table>
+      </div>
+      <!-- vj, game, data game-->
+      <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="row">
+          <div class="col-md-8 col-sm-8 col-xs-10 text-center">
+            <video id="example_video_1" class="video-js vjs-default-skin"
+              controls preload="auto" width="400  " height="300"
+              data-setup='{"example_option":true, "autoplay": true}'>
+             <!--<source src="rtmp://202.43.35.104/livestreaming/test" type="rtmp/flv" id="setStream">-->
+             <source src="" type="rtmp/flv" id="setStream">
+             <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+            </video>
+          </div>
+        </div>
+        <div class="row top-padding">
+          <div class="col-md-8 col-sm-12 col-xs-12 text-center">
+            <table class="table-bingo" border="1">
+              <thead>
+                <tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>
+              </thead>
+              <tbody id="card">
+                <!--<tr><td id="card1"><a href="#" id="b1" class="button-card">12</a></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td id="card2"><a href="#" id="b2" class="button-card">2</a></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td id="card3"></td><td></td><td>Free</td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>-->
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-3 col-sm-12 col-xs-12 text-center">
+            <input type="button" id="btCreateCard" name="creCard" class="btn btn-default" value="Create New Card">
+            <input type="button" id="btBingo" name="btBingo" class="btn btn-default" value="BINGO">
+          </div>
+        </div>
+      </div>
+      <!-- chat room -->
+      <div class="col-md-3 col-sm-3 col-xs-12 height100">
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="pill" href="#chat1">chat1</a></li>
+          <li><a data-toggle="pill" href="#chat2">chat1</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="chat1" class="tab-pane fade in active">
+            <form id="chatForm">
+              <div class="box-chat">
+                <ul id="chat-history">
+                </ul>
+              </div>
+              <input type="text" class="form-control" id="chat-message" autocomplete="off" placeholder="Enter message here...">
+            </form>
+          </div>
+          <div id="chat2" class="tab-pane fade">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    $(document).ready(function() {
+      var masterCard;
+      var gameststus;
+      var gameselect;
+      var gameno = '';
+      var gameuserdata = {};
+      var thisroom = window.location.pathname.split('/')[2];
+      if(thisroom != undefined){
+        console.log(thisroom);
+      }else{
+        console.log('go to homepage');
+      }
+
+      $('#setStream').attr('src', 'rtmp://202.43.35.178/live/'+thisroom);
+
+      for(i=1;i<=15;i++){
+        //$('.table-master-bingo').append('<tr><td><a href="#" id="master'+i+'" class="button-master-card">'+i+'</a></td><td><a href="#" id="master'+(15+i)+'" class="button-master-card">'+(15+i)+'</a></td><td><a href="#" id="master'+(30+i)+'" class="button-master-card">'+(30+i)+'</a></td><td><a href="#" id="master'+(45+i)+'" class="button-master-card">'+(45+i)+'</a></td><td><a href="#" id="master'+(60+i)+'" class="button-master-card">'+(60+i)+'</td></tr>');
+        $('.table-master-bingo').append('<tr><td><input type="button" id="master'+i+'" class="button-master-card" value="'+i+'"></td><td><input type="button" id="master'+(15+i)+'" class="button-master-card" value="'+(15+i)+'"></td><td><input type="button" id="master'+(30+i)+'" class="button-master-card" value="'+(30+i)+'"></td><td><input type="button" id="master'+(45+i)+'" class="button-master-card" value="'+(45+i)+'"></td><td><input type="button" id="master'+(60+i)+'" class="button-master-card" value="'+(60+i)+'"></td></tr>');
+      }
+      for(i=0;i<5;i++){
+        if(i!=2){
+          $('#card').append('<tr><td id="card'+i+'"></td><td id="card'+(5+i)+'"></td><td id="card'+(10+i)+'"></td><td id="card'+(15+i)+'"></td><td id="card'+(20+i)+'"></td></tr>');
+        }else{
+          $('#card').append('<tr><td id="card'+i+'"></td><td id="card'+(5+i)+'"></td><td>Free</td><td id="card'+(15+i)+'"></td><td id="card'+(20+i)+'"></td></tr>');
+        }
+      }
+
+      var usedArray = new Array(76);
+      var baseArray = new Array(0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4);
+      var number = 0;
+      var base = 0;
+//    add new card
+      //init();
+      function init(){
+          for(var i = 0; i<25; i++){
+              fillCard(i);
+          }
+          $(".button-card").click(function() {
+            var thisval = $(this).val();
+            var thisid = $(this).attr('id');
+
+            $.each(masterCard,function(index,vel){
+              if(index==thisval){
+                if(vel){
+                  if( !$('#'+thisid).hasClass('card-click')){
+                    $('#'+thisid).addClass('card-click');
+                  }
+                  else{
+                    $('#'+thisid).removeClass('card-click');
+                  }
+                }
+                //console.log(index+"|"+thisval)
+
+              }
+              //console.log($(this).val());
+            });
+          });
+      }
+      function fillCard(i){
+          base = baseArray[i] * 15;
+          number = base + Math.floor(Math.random()*15)+1;
+          if(usedArray[number] != true){
+              //$('#card'+i).html('<a href="#" id="d16'+i+'" class="button-card">'+number+'</a>');
+              $('#card'+i).html('<input type="button" id="cell'+i+'" class="button-card" value="'+number+'">');
+              usedArray[number] = true;
+              gameuserdata[i] = number;
+          }else{
+              fillCard(i);
+          }
+      }
+
+      function resetUsedNumbersArray(){
+          for(var j = 0; j < usedArray.length; j++){
+              usedArray[j] = false;
+          }
+      }
+      $("#btCreateCard").click(function() {
+        resetUsedNumbersArray();
+        init();
+      });
+//socket
+      var username = prompt("What's your name?");
+      var socket = io.connect();
+      socket.on('connect', function(){
+    		// call the server-side function 'adduser' and send one parameter (value of prompt)
+        socket.emit('adduser',username,thisroom);
+    	});
+      socket.on('updatechat',function(user,data){
+        //console.log(data);
+        if (username == user) {
+          $('#chat-history').append($('<li class="message message-me">').text(data));
+        } else {
+          $('#chat-history').append($('<li class="message">').text(user + ': ' + data));
+        }
+        //scroll down
+        $('#chat-history')[0].scrollTop = $('#chat-history')[0].scrollHeight;
+      });
+      socket.on('gameselect',function(data){
+        console.log('gameselect:'+data);
+        if(data != null){
+          gameselect = data;
+        }
+      });
+      socket.on('gamestatus',function(status,no){
+        console.log('gamestatus:'+status);
+        console.log('gameno:'+no);
+        if(status != null){
+          gamestatus = status;
+          gameno = no;
+        }
+      });
+      socket.on('gamecontrol', function(data){
+        console.log(data);
+        if(data != null){
+          masterCard = jQuery.parseJSON(data);
+          $.each(masterCard,function(index,val){
+            //console.log(index+"|"+val);
+            if(val){
+              if(!$("#master"+index).hasClass('card-click')){
+                $("#master"+index).addClass('card-click');
+              }
+            }else{
+              $("#master"+index).removeClass('card-click');
+            }
+          });
+        }
+      });
+      /*socket.on('userreturn',function(data){
+        console.log("userreturn:"+JSON.stringify(data));
+        if(data != null){
+          var jsondata = jQuery.parseJSON(JSON.stringify(data));
+          $.each(jsondata,function(index,val){
+            console.log("userreturn:"+index+"|"+val.game_id);
+          });
+        }
+      });*/
+      socket.on('userreturn',function(data){
+        console.log("userreturn:"+JSON.stringify(data));
+        console.log("card:"+JSON.stringify(gameuserdata));
+      });
+      $('#chatForm').submit(function(event) {
+        //console.log($('#chat-message').val());
+        if($('#chat-message').val() != ''){
+          socket.emit('sendchat',$('#chat-message').val());
+        }
+        $(this)[0].reset();
+        return false;
+      });
+
+      $('#btBingo').click(function(){
+        //แนวตั้ง
+        if($('#cell0').hasClass('card-click')&&$('#cell1').hasClass('card-click')&&$('#cell2').hasClass('card-click')&&$('#cell3').hasClass('card-click')&&$('#cell4').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell5').hasClass('card-click')&&$('#cell6').hasClass('card-click')&&$('#cell7').hasClass('card-click')&&$('#cell8').hasClass('card-click')&&$('#cell9').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell10').hasClass('card-click')&&$('#cell11').hasClass('card-click')&&$('#cell13').hasClass('card-click')&&$('#cell14').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell15').hasClass('card-click')&&$('#cell16').hasClass('card-click')&&$('#cell17').hasClass('card-click')&&$('#cell18').hasClass('card-click')&&$('#cell19').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell20').hasClass('card-click')&&$('#cell21').hasClass('card-click')&&$('#cell22').hasClass('card-click')&&$('#cell23').hasClass('card-click')&&$('#cell24').hasClass('card-click')){
+          alert('bingo');
+        }
+        //แนวนอน
+        if($('#cell0').hasClass('card-click')&&$('#cell5').hasClass('card-click')&&$('#cell10').hasClass('card-click')&&$('#cell15').hasClass('card-click')&&$('#cell20').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell1').hasClass('card-click')&&$('#cell6').hasClass('card-click')&&$('#cell11').hasClass('card-click')&&$('#cell16').hasClass('card-click')&&$('#cell21').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell2').hasClass('card-click')&&$('#cell7').hasClass('card-click')&&$('#cell17').hasClass('card-click')&&$('#cell22').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell3').hasClass('card-click')&&$('#cell8').hasClass('card-click')&&$('#cell13').hasClass('card-click')&&$('#cell18').hasClass('card-click')&&$('#cell23').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell4').hasClass('card-click')&&$('#cell9').hasClass('card-click')&&$('#cell14').hasClass('card-click')&&$('#cell19').hasClass('card-click')&&$('#cell24').hasClass('card-click')){
+          alert('bingo');
+        }
+        //แนวทแยง
+        if($('#cell0').hasClass('card-click')&&$('#cell6').hasClass('card-click')&&$('#cell18').hasClass('card-click')&&$('#cell24').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell4').hasClass('card-click')&&$('#cell8').hasClass('card-click')&&$('#cell11').hasClass('card-click')&&$('#cell20').hasClass('card-click')){
+          alert('bingo');
+        }
+        //มุม
+        if($('#cell0').hasClass('card-click')&&$('#cell4').hasClass('card-click')&&$('#cell20').hasClass('card-click')&&$('#cell24').hasClass('card-click')){
+          alert('bingo');
+        }
+        if($('#cell6').hasClass('card-click')&&$('#cell8').hasClass('card-click')&&$('#cell16').hasClass('card-click')&&$('#cell18').hasClass('card-click')){
+          alert('bingo');
+        }
+      });
+    });
+    </script>
+  </body>
+</html>
